@@ -49,7 +49,7 @@ public class AddressBookDBRunner {
         listDrivers();
 
         /**
-         * connecting to database
+         * Prerequisites: url, user name, password and some queries to execute.
          */
         String url = "jdbc:mysql://localhost:3306/address_book_db";/*useSSL=false";*///127.0.0.1:3306//localhost:3306
         String userName = "root";
@@ -198,14 +198,14 @@ public class AddressBookDBRunner {
 
         //adding headings of the columns
         heading.append(metaData.getColumnName(1)).append(", ")
-                .append(metaData.getColumnName(2)).append(", ")
-                .append(metaData.getColumnName(3)).append(", ")
-                .append(metaData.getColumnName(4)).append(", ")
-                .append(metaData.getColumnName(5)).append(", ")
-                .append(metaData.getColumnName(6)).append(", ")
-                .append(metaData.getColumnName(7)).append(", ")
-                .append(metaData.getColumnName(8)).append(", ")
-                .append(metaData.getColumnName(9));
+               .append(metaData.getColumnName(2)).append(", ")
+               .append(metaData.getColumnName(3)).append(", ")
+               .append(metaData.getColumnName(4)).append(", ")
+               .append(metaData.getColumnName(5)).append(", ")
+               .append(metaData.getColumnName(6)).append(", ")
+               .append(metaData.getColumnName(7)).append(", ")
+               .append(metaData.getColumnName(8)).append(", ")
+               .append(metaData.getColumnName(9));
         addressBookDataList.add(heading);
         System.out.println(heading);
 
@@ -214,14 +214,14 @@ public class AddressBookDBRunner {
 
             //appending data to string buffer
             dataFromDB.append(resultSet.getInt(1)).append(", ")
-                    .append(resultSet.getString("first_name")).append(", ")
-                    .append(resultSet.getString("last_name")).append(", ")
-                    .append(resultSet.getString("address")).append(", ")
-                    .append(resultSet.getString("city")).append(", ")
-                    .append(resultSet.getString("state")).append(", ")
-                    .append(resultSet.getString("zip")).append(", ")
-                    .append(resultSet.getString("phonenumber")).append(", ")
-                    .append(resultSet.getString("email"));
+                      .append(resultSet.getString("first_name")).append(", ")
+                      .append(resultSet.getString("last_name")).append(", ")
+                      .append(resultSet.getString("address")).append(", ")
+                      .append(resultSet.getString("city")).append(", ")
+                      .append(resultSet.getString("state")).append(", ")
+                      .append(resultSet.getString("zip")).append(", ")
+                      .append(resultSet.getString("phonenumber")).append(", ")
+                      .append(resultSet.getString("email"));
 
             //adding data to list
             addressBookDataList.add(dataFromDB);//adding to the list
@@ -230,16 +230,14 @@ public class AddressBookDBRunner {
             System.out.print(resultSet.getInt(1) + " ");
             System.out.println(
                     resultSet.getString("first_name") + " " +
-                            resultSet.getString("last_name") + " " +
-                            resultSet.getString("address") + " " +
-                            resultSet.getString("city") + " " +
-                            resultSet.getString("state") + " " +
-                            resultSet.getString("zip") + " " +
-                            resultSet.getString("phonenumber") + " " +
-                            resultSet.getString("email"));
+                    resultSet.getString("last_name") + " " +
+                    resultSet.getString("address") + " " +
+                    resultSet.getString("city") + " " +
+                    resultSet.getString("state") + " " +
+                    resultSet.getString("zip") + " " +
+                    resultSet.getString("phonenumber") + " " +
+                    resultSet.getString("email"));
         }
-
-
     }
 
     /**
