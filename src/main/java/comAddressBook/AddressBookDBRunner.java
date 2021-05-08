@@ -108,13 +108,13 @@ public class AddressBookDBRunner {
                 System.out.print(resultSet.getInt(1) + " ");
                 System.out.println(
                         resultSet.getString("first_name") + " " +
-                                resultSet.getString("last_name") + " " +
-                                resultSet.getString("address") + " " +
-                                resultSet.getString("city") + " " +
-                                resultSet.getString("state") + " " +
-                                resultSet.getString("zip") + " " +
-                                resultSet.getString("phonenumber") + " " +
-                                resultSet.getString("email"));
+                        resultSet.getString("last_name") + " " +
+                        resultSet.getString("address") + " " +
+                        resultSet.getString("city") + " " +
+                        resultSet.getString("state") + " " +
+                        resultSet.getString("zip") + " " +
+                        resultSet.getString("phonenumber") + " " +
+                        resultSet.getString("email"));
             }
         } catch (CsvRequiredFieldEmptyException e) {
             e.printStackTrace();
