@@ -214,30 +214,22 @@ public class AddressBookDBRunner {
 
             //appending data to string buffer
             dataFromDB.append(resultSet.getInt(1)).append(", ")
-                      .append(resultSet.getString("first_name")).append(", ")
-                      .append(resultSet.getString("last_name")).append(", ")
-                      .append(resultSet.getString("address")).append(", ")
-                      .append(resultSet.getString("city")).append(", ")
-                      .append(resultSet.getString("state")).append(", ")
-                      .append(resultSet.getString("zip")).append(", ")
-                      .append(resultSet.getString("phonenumber")).append(", ")
-                      .append(resultSet.getString("email"));
+                    .append(resultSet.getString("first_name")).append(", ")
+                    .append(resultSet.getString("last_name")).append(", ")
+                    .append(resultSet.getString("address")).append(", ")
+                    .append(resultSet.getString("city")).append(", ")
+                    .append(resultSet.getString("state")).append(", ")
+                    .append(resultSet.getString("zip")).append(", ")
+                    .append(resultSet.getString("phonenumber")).append(", ")
+                    .append(resultSet.getString("email"));
 
             //adding data to list
             addressBookDataList.add(dataFromDB);//adding to the list
-
-            //fetching data from database and printing to the console
-            System.out.print(resultSet.getInt(1) + " ");
-            System.out.println(
-                    resultSet.getString("first_name") + " " +
-                    resultSet.getString("last_name") + " " +
-                    resultSet.getString("address") + " " +
-                    resultSet.getString("city") + " " +
-                    resultSet.getString("state") + " " +
-                    resultSet.getString("zip") + " " +
-                    resultSet.getString("phonenumber") + " " +
-                    resultSet.getString("email"));
         }
+        System.out.println("**************************************");
+        System.out.println("Printing all the data to console:\n");
+        addressBookDataList.stream().forEach(System.out::println);
+        System.out.println("**************************************");
     }
 
     /**
