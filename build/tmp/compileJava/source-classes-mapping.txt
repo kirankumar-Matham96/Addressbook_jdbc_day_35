@@ -1,4 +1,2 @@
-comAddressBook/CloseResources.java
- comAddressBook.CloseResources
 comAddressBook/AddressBookDBRunner.java
  comAddressBook.AddressBookDBRunner

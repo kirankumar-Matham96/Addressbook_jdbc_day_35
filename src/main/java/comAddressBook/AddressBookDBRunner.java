@@ -1,6 +1,13 @@
 package comAddressBook;
 
+import com.opencsv.exceptions.CsvDataTypeMismatchException;
+import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
+
+import java.io.IOException;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
 
 /**
  * steps to follow to connect Java application with database
@@ -14,16 +21,25 @@ import java.sql.*;
  */
 
 public class AddressBookDBRunner {
-    public static void main(String[] args) throws ClassNotFoundException {
+    public static void main(String[] args) throws ClassNotFoundException, SQLException {
+        /**
+         * UC16: Connecting to database and retrieving data
+         */
+
         /**
          * register and load drivers
          */
         Class.forName("com.mysql.cj.jdbc.Driver");//deprecated in 2006
 
         /**
+        * printing the drivers
+        */
+        listDrivers();
+
+        /**
          * connecting to database
          */
-        String url = "jdbc:mysql://localhost:3306/address_book_db";//127.0.0.1:3306//localhost:3306
+        String url = "jdbc:mysql://localhost:3306/address_book_db?useSSL=false";//127.0.0.1:3306//localhost:3306
         String userName = "root";
         String password = "Energy123@*/+";
         String query = "SELECT * FROM address_book";
@@ -47,6 +63,44 @@ public class AddressBookDBRunner {
             ResultSet resultSet = statement.executeQuery(query);
 
             /**
+             * gathering data from database to write to the csv file
+             */
+            List<Object> addressBookDataList = new ArrayList();
+            ResultSetMetaData metaData = resultSet.getMetaData();
+            StringBuffer heading = new StringBuffer();
+
+            //adding headings of the columns
+            heading.append(metaData.getColumnName(1)).append(", ")
+                    .append(metaData.getColumnName(2)).append(", ")
+                    .append(metaData.getColumnName(3)).append(", ")
+                    .append(metaData.getColumnName(4)).append(", ")
+                    .append(metaData.getColumnName(5)).append(", ")
+                    .append(metaData.getColumnName(6)).append(", ")
+                    .append(metaData.getColumnName(7)).append(", ")
+                    .append(metaData.getColumnName(8)).append(", ")
+                    .append(metaData.getColumnName(9));
+            addressBookDataList.add(heading);
+            System.out.println(heading);
+
+            while(resultSet.next()) {
+                StringBuffer dataFromDB = new StringBuffer();
+                dataFromDB.append(resultSet.getInt(1)).append(", ")
+                          .append(resultSet.getString("first_name")).append(", ")
+                          .append(resultSet.getString("last_name")).append(", ")
+                          .append(resultSet.getString("address")).append(", ")
+                          .append(resultSet.getString("city")).append(", ")
+                          .append(resultSet.getString("state")).append(", ")
+                          .append(resultSet.getString("zip")).append(", ")
+                          .append(resultSet.getString("phonenumber")).append(", ")
+                          .append(resultSet.getString("email"));
+                addressBookDataList.add(dataFromDB);//adding to the list
+            }
+
+            //calling method to write the data to the CSV file
+            AddressBookDBRunner addressBookDBRunner = new AddressBookDBRunner();
+            addressBookDBRunner.writeToCSVFile(addressBookDataList);
+
+            /**
              * printing results
              */
             while (resultSet.next()) {
@@ -62,8 +116,31 @@ public class AddressBookDBRunner {
                                 resultSet.getString("phonenumber") + " " +
                                 resultSet.getString("email"));
             }
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+        } catch (CsvRequiredFieldEmptyException e) {
+            e.printStackTrace();
+        } catch (CsvDataTypeMismatchException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+    }
+
+    /**
+     * gets the drivers that loaded
+     */
+    private static void listDrivers() {
+        Enumeration<Driver> driverList = DriverManager.getDrivers();
+        while (driverList.hasMoreElements()) {
+            Driver driverClass = driverList.nextElement();
+            System.out.println("Driver loaded:  " + driverClass.getClass().getName());
+        }
+    }
+
+    /**
+     * writing data fetched from database to csv file
+     */
+    public void writeToCSVFile(List<Object> addressBookData) throws IOException, CsvRequiredFieldEmptyException, CsvDataTypeMismatchException, CsvDataTypeMismatchException {
+        CSVFileHandler csvFileHandler = new CSVFileHandler();
+        csvFileHandler.csvWriter(addressBookData);
     }
 }
