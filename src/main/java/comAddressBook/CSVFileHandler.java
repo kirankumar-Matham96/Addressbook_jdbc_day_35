@@ -11,7 +11,13 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 
+/**
+ * Read or write to the csv file
+ */
 public class CSVFileHandler {
+    /**
+     * giving a file path: same folder as project and given file name.
+     */
     private static final String FILE_NAME = "Contacts.csv";
 
     public void csvWriter(List<Object> contactsList) throws IOException, CsvRequiredFieldEmptyException, CsvDataTypeMismatchException {
@@ -22,7 +28,6 @@ public class CSVFileHandler {
                 .withQuotechar(CSVWriter.NO_QUOTE_CHARACTER)
                 .withLineEnd(CSVWriter.DEFAULT_LINE_END)
                 .build();
-        System.out.println("in CSVHandler: "+contactsList);
         statefulBeanToCsv.write(contactsList);
         writer.close();
     }
