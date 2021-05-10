@@ -36,7 +36,7 @@ import java.util.List;
  */
 
 public class AddressBookDBRunner {
-    public static void main(String[] args) throws ClassNotFoundException, SQLException {
+    public static void main(String[] args) throws ClassNotFoundException, SQLException, CsvRequiredFieldEmptyException, CsvDataTypeMismatchException {
         AddressBookDBRunner addressBookDBRunner = new AddressBookDBRunner();
         /**
          * register and load drivers
@@ -174,27 +174,21 @@ public class AddressBookDBRunner {
             System.out.println("\nAfter inserting set of new contacts:\n");
             addressBookDBRunner.retrieveAllDataFromDatabase(resultSet);
 
-            //calling method to write the data to the CSV file
-//            AddressBookDBRunner addressBookDBRunner = new AddressBookDBRunner();
-//            addressBookDBRunner.writeToCSVFile(addressBookDataList);
-
-        } /*catch (CsvRequiredFieldEmptyException e) {
+        }catch (IOException e) {
             e.printStackTrace();
-        } catch (CsvDataTypeMismatchException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
+        }
     }
 
     /**
      * UC16: retrieving data from database.
-     * gathering data from database to write to the csv file and print to console
+     * gathering data from database to write to the txt,csv,json files and print to console
      */
-    public void retrieveAllDataFromDatabase(ResultSet resultSet) throws SQLException {
-        List<Object> addressBookDataList = new ArrayList();
+    public void retrieveAllDataFromDatabase(ResultSet resultSet) throws SQLException, IOException, CsvRequiredFieldEmptyException, CsvDataTypeMismatchException {
+        List<String[]> addressBookDataListForCSV = new ArrayList();
+        List<String> addressBookDataListForJsonAndTxt = new ArrayList();
         ResultSetMetaData metaData = resultSet.getMetaData();
         StringBuffer heading = new StringBuffer();
+        String[] stringHeading = new String[1];
 
         //adding headings of the columns
         heading.append(metaData.getColumnName(1)).append(", ")
@@ -206,11 +200,14 @@ public class AddressBookDBRunner {
                .append(metaData.getColumnName(7)).append(", ")
                .append(metaData.getColumnName(8)).append(", ")
                .append(metaData.getColumnName(9));
-        addressBookDataList.add(heading);
+        stringHeading[0] = heading.toString();
+        addressBookDataListForCSV.add(stringHeading);
+
         System.out.println(heading);
 
         while (resultSet.next()) {
             StringBuffer dataFromDB = new StringBuffer();
+            StringBuffer dataFromDBJson = new StringBuffer();
 
             //appending data to string buffer
             dataFromDB.append(resultSet.getInt(1)).append(", ")
@@ -222,14 +219,20 @@ public class AddressBookDBRunner {
                     .append(resultSet.getString("zip")).append(", ")
                     .append(resultSet.getString("phonenumber")).append(", ")
                     .append(resultSet.getString("email"));
+            String[] stringData = new String[]{dataFromDB.toString()};
 
             //adding data to list
-            addressBookDataList.add(dataFromDB);//adding to the list
+            addressBookDataListForCSV.add(stringData);//adding to the list
+            addressBookDataListForJsonAndTxt.add(dataFromDB.toString());
         }
-        System.out.println("**************************************");
+        System.out.println("######################################");
         System.out.println("Printing all the data to console:\n");
-        addressBookDataList.stream().forEach(System.out::println);
-        System.out.println("**************************************");
+        addressBookDataListForJsonAndTxt.stream().forEach(System.out::println);
+        System.out.println("######################################");
+
+        writeToCSVFile(addressBookDataListForCSV);//writing to csv
+        writeToJsonFile(addressBookDataListForJsonAndTxt);//writing to json
+        writeToTextFile(addressBookDataListForJsonAndTxt);//writing to txt
     }
 
     /**
@@ -244,10 +247,26 @@ public class AddressBookDBRunner {
     }
 
     /**
+     * writing data fetched from database to text file
+     */
+    public void writeToTextFile(List<String> addressBookData) throws IOException {
+        NormalFileHandler normalFileHandler = new NormalFileHandler();
+        normalFileHandler.writeToNormalTextFile(addressBookData);
+    }
+
+    /**
      * writing data fetched from database to csv file
      */
-    public void writeToCSVFile(List<Object> addressBookData) throws IOException, CsvRequiredFieldEmptyException, CsvDataTypeMismatchException, CsvDataTypeMismatchException {
+    public void writeToCSVFile(List<String[]> addressBookData) throws IOException, CsvRequiredFieldEmptyException, CsvDataTypeMismatchException {
         CSVFileHandler csvFileHandler = new CSVFileHandler();
         csvFileHandler.csvWriter(addressBookData);
+    }
+
+    /**
+     * writing data fetched form database to json file
+     */
+    public void writeToJsonFile(List<String> addressBookData) {
+        JsonFileHandler jsonFileHandler = new JsonFileHandler();
+        jsonFileHandler.jsonWriter(addressBookData);
     }
 }

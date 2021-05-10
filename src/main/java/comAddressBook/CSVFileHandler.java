@@ -20,15 +20,11 @@ public class CSVFileHandler {
      */
     private static final String FILE_NAME = "Contacts.csv";
 
-    public void csvWriter(List<Object> contactsList) throws IOException, CsvRequiredFieldEmptyException, CsvDataTypeMismatchException {
-
+    public void csvWriter(List<String[]> contactsList) throws IOException, CsvRequiredFieldEmptyException, CsvDataTypeMismatchException {
         Writer writer = Files.newBufferedWriter(Paths.get(FILE_NAME));
-        StatefulBeanToCsv<Object> statefulBeanToCsv = new StatefulBeanToCsvBuilder(writer)
-                .withSeparator(',')
-                .withQuotechar(CSVWriter.NO_QUOTE_CHARACTER)
-                .withLineEnd(CSVWriter.DEFAULT_LINE_END)
-                .build();
-        statefulBeanToCsv.write(contactsList);
+        CSVWriter csvWriter = new CSVWriter(writer);
+        csvWriter.writeAll(contactsList);
+        csvWriter.flush();
         writer.close();
     }
 }
