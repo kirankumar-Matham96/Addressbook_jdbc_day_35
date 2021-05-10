@@ -30,12 +30,24 @@ import java.util.*;
  *       Principle is not violated when new data source is
  *       added to already three data source
  *       i.e. CSV File, JSON File or JSONServer.
- * UC23: RestAssured: read or write to the json server
  */
-
 public class AddressBookDBRunner {
-    public static void main(String[] args) throws ClassNotFoundException, SQLException, CsvRequiredFieldEmptyException, CsvDataTypeMismatchException {
+
+    /**
+     * main method
+     * @param args
+     * @throws ClassNotFoundException
+     */
+    public static void main(String[] args) throws ClassNotFoundException {
         AddressBookDBRunner addressBookDBRunner = new AddressBookDBRunner();
+        addressBookDBRunner.operationsOnJDBC();
+    }
+
+    /**
+     * All the operations are performed here
+     */
+    public void operationsOnJDBC() throws ClassNotFoundException {
+
         /**
          * register and load drivers
          */
@@ -58,10 +70,10 @@ public class AddressBookDBRunner {
         String numberByStateQuery = "SELECT state,count(*) AS count FROM address_book WHERE state = ?;";
         String numberByCityQuery = "SELECT city,count(*) AS count FROM address_book WHERE city = ?;";
         String addNewContactQuery = "insert into address_book " +
-                                    "(first_name,last_name,address,city,state,zip,phonenumber,email,date_added)"+
-                                    "values(" +
-                                        "?,?,?,?,?,?,?,?,CAST(? AS DATE)"+
-                                    ");";
+                "(first_name,last_name,address,city,state,zip,phonenumber,email,date_added)"+
+                "values(" +
+                "?,?,?,?,?,?,?,?,CAST(? AS DATE)"+
+                ");";
 
 
         /**
@@ -83,9 +95,9 @@ public class AddressBookDBRunner {
             /**
              * getting results from executing query(existing data)
              */
-//            ResultSet resultSet = statement.executeQuery(selectAllQuery);
-//            System.out.println("\nAll the data existed in the data base:\n");
-//            addressBookDBRunner.retrieveAllDataFromDatabase(resultSet);
+            ResultSet resultSet = statement.executeQuery(selectAllQuery);
+            System.out.println("\nAll the data existed in the data base:\n");
+            retrieveAllDataFromDatabase(resultSet);
 
             /**
              * UC17: Update the data in the database.
@@ -95,16 +107,16 @@ public class AddressBookDBRunner {
             /**
              * getting results from executing query(updated data)
              */
-//            resultSet = statement.executeQuery(selectAllQuery);
-//            System.out.println("\nAfter updating existing contact:\n");
-//            addressBookDBRunner.retrieveAllDataFromDatabase(resultSet);
+            resultSet = statement.executeQuery(selectAllQuery);
+            System.out.println("\nAfter updating existing contact:\n");
+            retrieveAllDataFromDatabase(resultSet);
 
             /**
              * UC18: Getting details of persons in a particular date range
              */
-//            resultSet = statement.executeQuery(getByDateRange);//date range: 2010-01-01 to 2020-12-31
-//            System.out.println("\npersons added in between 2010-01-01 and 2020-12-31: \n");
-//            addressBookDBRunner.retrieveAllDataFromDatabase(resultSet);
+            resultSet = statement.executeQuery(getByDateRange);//date range: 2010-01-01 to 2020-12-31
+            System.out.println("\npersons added in between 2010-01-01 and 2020-12-31: \n");
+            retrieveAllDataFromDatabase(resultSet);
 
             /**
              * UC19: getting person count by city/state.
@@ -112,74 +124,74 @@ public class AddressBookDBRunner {
              */
             //count by state:
             //passing parameter
-//            preparedStatementState.setString(1, "Telangana"); //Maharastra, Karnataka
-//            //executing query and populating resultSet
-//            resultSet = preparedStatementState.executeQuery();
-//            //printing resultSet(prints count by state)
-//            while(resultSet.next()) {
-//                System.out.println("\ncount by state:\n"+resultSet.getString("state") + " " + resultSet.getString("count"));
-//            }
+            preparedStatementState.setString(1, "Telangana"); //Maharastra, Karnataka
+            //executing query and populating resultSet
+            resultSet = preparedStatementState.executeQuery();
+            //printing resultSet(prints count by state)
+            while(resultSet.next()) {
+                System.out.println("\ncount by state:\n"+resultSet.getString("state") + " " + resultSet.getString("count"));
+            }
 
             //count by city:
             //passing parameter
-//            preparedStatementCity.setString(1, "Pune"); //Hyderabad, Benguluru
-//            //executing query and populating resultSet
-//            resultSet = preparedStatementCity.executeQuery();
-//            //printing resultSet(prints count by state)
-//            while(resultSet.next()) {
-//                System.out.println("\ncount by city:\n"+resultSet.getString("city") + " " + resultSet.getString("count"));
-//            }
-//
-//            /**
-//             * UC20: adding new contact/s
-//             */
-//            //adding single person
-//            preparedStatementNewInsert.setString(1,"New00"+7);//first_name
-//            preparedStatementNewInsert.setString(2,"Person00"+7);//last_name
-//            preparedStatementNewInsert.setString(3,"New.P Address");//address
-//            preparedStatementNewInsert.setString(4,"new city");//city
-//            preparedStatementNewInsert.setString(5,"new state");//state
-//            preparedStatementNewInsert.setInt(6,700000);//zip
-//            preparedStatementNewInsert.setString(7,"+66 1478523698");//phonenumber
-//            preparedStatementNewInsert.setString(8,"new.p@gmail.com");//email
-//            preparedStatementNewInsert.setString(9,"2015-11-25");
-//
-//            preparedStatementNewInsert.executeUpdate();
-//
-//            resultSet = statement.executeQuery(selectAllQuery);
-//            System.out.println("\nAfter inserting single new contact:\n");
-//            addressBookDBRunner.retrieveAllDataFromDatabase(resultSet);
-//
-//            //adding multiple persons at the same time(using Batch execution)
-//            int numberOfPersonsAdding = 5;//adding 5 new contacts
-//            for(int i = 1;i<=numberOfPersonsAdding;i++){
-//                preparedStatementNewInsert.setString(1,"New00"+i);//first_name
-//                preparedStatementNewInsert.setString(2,"Person00"+i);//last_name
-//                preparedStatementNewInsert.setString(3,i+"New.P Address");//address
-//                preparedStatementNewInsert.setString(4,i+"new city");//city
-//                preparedStatementNewInsert.setString(5,i+"new state");//state
-//                preparedStatementNewInsert.setInt(6,700000+i);//zip
-//                preparedStatementNewInsert.setString(7,"+"+i+" 1478523698");//phonenumber
-//                preparedStatementNewInsert.setString(8,i+"new.p@gmail.com");//email
-//                preparedStatementNewInsert.setString(9,"2000-08-0"+i);
-//
-//                preparedStatementNewInsert.addBatch();//adding statements to the batch.
-//            }
-//            preparedStatementNewInsert.executeBatch();//executing bunch of queries all together.
-//
-//            //after inserting set of new contacts
-//            resultSet = statement.executeQuery(selectAllQuery);
-//            System.out.println("\nAfter inserting set of new contacts:\n");
-//            addressBookDBRunner.retrieveAllDataFromDatabase(resultSet);
+            preparedStatementCity.setString(1, "Pune"); //Hyderabad, Benguluru
+            //executing query and populating resultSet
+            resultSet = preparedStatementCity.executeQuery();
+            //printing resultSet(prints count by state)
+            while(resultSet.next()) {
+                System.out.println("\ncount by city:\n"+resultSet.getString("city") + " " + resultSet.getString("count"));
+            }
+
+            /**
+             * UC20: adding new contact/s
+             */
+            //adding single person
+            preparedStatementNewInsert.setString(1,"New00"+7);//first_name
+            preparedStatementNewInsert.setString(2,"Person00"+7);//last_name
+            preparedStatementNewInsert.setString(3,"New.P Address");//address
+            preparedStatementNewInsert.setString(4,"new city");//city
+            preparedStatementNewInsert.setString(5,"new state");//state
+            preparedStatementNewInsert.setInt(6,700000);//zip
+            preparedStatementNewInsert.setString(7,"+66 1478523698");//phonenumber
+            preparedStatementNewInsert.setString(8,"new.p@gmail.com");//email
+            preparedStatementNewInsert.setString(9,"2015-11-25");
+
+            preparedStatementNewInsert.executeUpdate();
+
+            resultSet = statement.executeQuery(selectAllQuery);
+            System.out.println("\nAfter inserting single new contact:\n");
+            retrieveAllDataFromDatabase(resultSet);
+
+            //adding multiple persons at the same time(using Batch execution)
+            int numberOfPersonsAdding = 5;//adding 5 new contacts
+            for(int i = 1;i<=numberOfPersonsAdding;i++){
+                preparedStatementNewInsert.setString(1,"New00"+i);//first_name
+                preparedStatementNewInsert.setString(2,"Person00"+i);//last_name
+                preparedStatementNewInsert.setString(3,i+"New.P Address");//address
+                preparedStatementNewInsert.setString(4,i+"new city");//city
+                preparedStatementNewInsert.setString(5,i+"new state");//state
+                preparedStatementNewInsert.setInt(6,700000+i);//zip
+                preparedStatementNewInsert.setString(7,"+"+i+" 1478523698");//phonenumber
+                preparedStatementNewInsert.setString(8,i+"new.p@gmail.com");//email
+                preparedStatementNewInsert.setString(9,"2000-08-0"+i);
+
+                preparedStatementNewInsert.addBatch();//adding statements to the batch.
+            }
+            preparedStatementNewInsert.executeBatch();//executing bunch of queries all together.
+
+            //after inserting set of new contacts
+            resultSet = statement.executeQuery(selectAllQuery);
+            System.out.println("\nAfter inserting set of new contacts:\n");
+            retrieveAllDataFromDatabase(resultSet);
 
             /**
              * UC 21: multi-Thread operation
              */
             Map<Integer, Boolean> personAdditionStatus = new HashMap<>();
-                Runnable thread = () -> {
-                    personAdditionStatus.put(1,false);
-                    System.out.println("New person being inserted: " + Thread.currentThread().getName());
-                    try {
+            Runnable thread = () -> {
+                personAdditionStatus.put(1,false);
+                System.out.println("New person being inserted: " + Thread.currentThread().getName());
+                try {
                     preparedStatementNewInsert.setString(1, "New100");//first_name
                     preparedStatementNewInsert.setString(2, "Person100");//last_name
                     preparedStatementNewInsert.setString(3, "New100.P Address");//address
@@ -190,28 +202,33 @@ public class AddressBookDBRunner {
                     preparedStatementNewInsert.setString(8, "100new.p@gmail.com");//email
                     preparedStatementNewInsert.setString(9, "2021-09-25");//date
 
-                        preparedStatementNewInsert.executeUpdate();
-                    } catch (SQLException throwables) {
-                        throwables.printStackTrace();
-                    }
-                    personAdditionStatus.put(1,true);
-                    System.out.println("New person inserted: " + Thread.currentThread().getName());
-                };
-                Thread thread1 = new Thread(thread);
-                thread1.start();
-                while(personAdditionStatus.containsValue(false)){
-                    Thread.sleep(5000);
+                    preparedStatementNewInsert.executeUpdate();
+                } catch (SQLException throwables) {
+                    throwables.printStackTrace();
                 }
+                personAdditionStatus.put(1,true);
+                System.out.println("New person inserted: " + Thread.currentThread().getName());
+            };
+            Thread thread1 = new Thread(thread);
+            thread1.start();
+            while(personAdditionStatus.containsValue(false)){
+                Thread.sleep(5000);
+            }
             //after inserting set of new contacts
-            ResultSet resultSet = statement.executeQuery(selectAllQuery);
-            addressBookDBRunner.retrieveAllDataFromDatabase(resultSet);
+            resultSet = statement.executeQuery(selectAllQuery);
+            retrieveAllDataFromDatabase(resultSet);
         }catch (IOException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
             e.printStackTrace();
+        } catch (CsvRequiredFieldEmptyException e) {
+            e.printStackTrace();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        } catch (CsvDataTypeMismatchException e) {
+            e.printStackTrace();
         }
     }
-
     /**
      * UC16: retrieving data from database.
      * gathering data from database to write to the txt,csv,json files and print to console
@@ -262,9 +279,9 @@ public class AddressBookDBRunner {
         addressBookDataListForJsonAndTxt.stream().forEach(System.out::println);
         System.out.println("######################################");
 
-//        writeToCSVFile(addressBookDataListForCSV);//writing to csv
-//        writeToJsonFile(addressBookDataListForJsonAndTxt);//writing to json
-//        writeToTextFile(addressBookDataListForJsonAndTxt);//writing to txt
+        writeToCSVFile(addressBookDataListForCSV);//writing to csv
+        writeToJsonFile(addressBookDataListForJsonAndTxt);//writing to json
+        writeToTextFile(addressBookDataListForJsonAndTxt);//writing to txt
     }
 
     /**
