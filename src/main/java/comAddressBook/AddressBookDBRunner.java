@@ -229,6 +229,7 @@ public class AddressBookDBRunner {
             e.printStackTrace();
         }
     }
+
     /**
      * UC16: retrieving data from database.
      * gathering data from database to write to the txt,csv,json files and print to console
