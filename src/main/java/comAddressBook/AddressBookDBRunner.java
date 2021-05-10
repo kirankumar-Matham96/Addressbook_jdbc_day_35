@@ -74,18 +74,16 @@ public class AddressBookDBRunner {
                 "values(" +
                 "?,?,?,?,?,?,?,?,CAST(? AS DATE)"+
                 ");";
-
-
         /**
-         * Creating Connection with in try-with resources
-         * It will close the connection after the try block automatically
+         * try with resources.
+         * connection making with database using singleton pattern
          */
-        try (Connection connection = DriverManager.getConnection(url, userName, password)) {
+        try (Connection connection = establishConnection(url,userName,password)) {
 
             /**
              * creating a statement
-             * NOTE: Statement is auto closable. When Connection is closed,
-             *       it will automatically gets closed.
+             * NOTE: Statement and prepared statement are auto closable. When Connection is closed,
+             *       they will automatically gets closed.
              */
             Statement statement = connection.createStatement();
             PreparedStatement preparedStatementState = connection.prepareStatement(numberByStateQuery);
@@ -286,6 +284,21 @@ public class AddressBookDBRunner {
     }
 
     /**
+     * Create connection
+     */
+    synchronized public Connection establishConnection(String url, String userName, String password){
+        Connection connection = null;
+        try {
+            if(connection != null) {
+                connection = DriverManager.getConnection(url, userName, password);
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return connection;
+    }
+
+    /**
      * gets the drivers that loaded
      */
     private static void listDrivers() {
@@ -320,3 +333,4 @@ public class AddressBookDBRunner {
         jsonFileHandler.jsonWriter(addressBookData);
     }
 }
+
